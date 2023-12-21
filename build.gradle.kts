@@ -24,15 +24,15 @@ repositories {
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
 }
 
-val shadow by configurations.creating {
+val shadowImpl by configurations.creating {
     configurations.implementation.get().extendsFrom(this)
 }
 
 @Suppress("VulnerableLibrariesLocal")
 dependencies {
     implementation("org.bukkit:bukkit:1.12.2-R0.1-SNAPSHOT")
-    shadow("org.ow2.asm:asm:9.5")
-    shadow("org.ow2.asm:asm-tree:9.5")
+    shadowImpl("org.ow2.asm:asm:9.5")
+    shadowImpl("org.ow2.asm:asm-tree:9.5")
 }
 
 tasks.compileJava {
@@ -54,7 +54,7 @@ tasks.jar {
 }
 
 tasks.shadowJar {
-    configurations = listOf(shadow)
+    configurations = listOf(shadowImpl)
     relocate("org.objectweb", "xyz.wagyourtail.unimined.cpl.shadow.org.objectweb")
 }
 
