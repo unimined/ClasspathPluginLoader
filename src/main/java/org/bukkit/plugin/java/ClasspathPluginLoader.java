@@ -12,8 +12,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.*;
-import org.bukkit.plugin.java.ClasspathPluginClassLoader;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.yaml.snakeyaml.error.YAMLException;
 import xyz.wagyourtail.unimined.cpl.SimplePluginManagerAccessor;
 
@@ -51,8 +49,8 @@ public class ClasspathPluginLoader implements PluginLoader {
         }
         List<Plugin> plugins = new ArrayList<>();
 
-        for (String group : pluginFolderGroups.split("::")) {
-            String[] files = group.split(":");
+        for (String group : pluginFolderGroups.split(File.pathSeparator + File.pathSeparator)) {
+            String[] files = group.split(File.pathSeparator);
             File[] pluginFiles = new File[files.length];
             for (int i = 0; i < files.length; i++) {
                 pluginFiles[i] = new File(files[i]);

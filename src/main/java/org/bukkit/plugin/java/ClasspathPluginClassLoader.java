@@ -23,7 +23,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 
 public final class ClasspathPluginClassLoader extends URLClassLoader {
     private final ClasspathPluginLoader loader;
-    private final Map<String, Class<?>> classes = new HashMap();
+    private final Map<String, Class<?>> classes = new HashMap<>();
     private final PluginDescriptionFile description;
     private final File dataFolder;
     private final Manifest manifest;
@@ -80,16 +80,11 @@ public final class ClasspathPluginClassLoader extends URLClassLoader {
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         synchronized (this.getClassLoadingLock(name)) {
-            // has the class loaded already?
             Class<?> loadedClass = findLoadedClass(name);
             if (loadedClass == null) {
                 try {
-                    // find the class from given jar urls
                     loadedClass = findClass(name);
                 } catch (ClassNotFoundException e) {
-                    // Hmmm... class does not exist in the given urls.
-                    // Let's try finding it in our parent classloader.
-                    // this'll throw ClassNotFoundException in failure.
                     loadedClass = super.loadClass(name, resolve);
                 }
             }
