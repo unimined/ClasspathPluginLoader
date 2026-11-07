@@ -33,7 +33,16 @@ public class ClasspathPluginLoader implements PluginLoader {
 
 
     public ClasspathPluginLoader(Server server) {
-        this.pluginManager = (SimplePluginManagerAccessor) server.getPluginManager();
+        this(server, (SimplePluginManagerAccessor) server.getPluginManager());
+    }
+
+    /**
+     * Paper path — [server]'s PluginManager is a PaperPluginManagerImpl
+     * wrapper, so the registry accessor is passed in by the injected
+     * call site (the transformed PaperPluginInstanceManager itself).
+     */
+    public ClasspathPluginLoader(Server server, SimplePluginManagerAccessor pluginManager) {
+        this.pluginManager = pluginManager;
         this.server = server;
     }
 
@@ -62,11 +71,17 @@ public class ClasspathPluginLoader implements PluginLoader {
             }
         }
 
+        List<Plugin> added = new ArrayList<>();
         for (Plugin plugin : plugins) {
+            // idempotent — PLUGIN entrypoint and PluginManager API paths can
+            // both reach loadAll (e.g. paper boot then a /reload)
+            if (pluginManager.cpl$getLookupNames().containsKey(
+                plugin.getDescription().getName())) continue;
             pluginManager.cpl$addPlugin(plugin);
+            added.add(plugin);
         }
 
-        return plugins;
+        return added;
     }
 
     public Plugin loadPlugin(Set<File> files) throws InvalidPluginException {
